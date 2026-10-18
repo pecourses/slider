@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.module.css";
 import slides from "./assets/data.js";
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlay, setIsPlay] = useState(false);
 
   const prev = () => {
     setCurrentIndex(prevIndex => {
@@ -22,6 +23,20 @@ function App() {
     });
   };
 
+  const changePlay = () => {
+    setIsPlay(prevIsPlay => !prevIsPlay);
+  };
+
+  useEffect(() => {
+    let timerId = null;
+    if (isPlay) {
+      timerId = setInterval(next, 500);
+    }
+    return () => {
+      clearInterval(timerId);
+    };
+  }, [isPlay]);
+
   const { src, title, description } = slides[currentIndex];
   return (
     <>
@@ -33,6 +48,7 @@ function App() {
         </figure>
         <button onClick={prev}>{"<"}</button>
         <button onClick={next}>{">"}</button>
+        <button onClick={changePlay}>{isPlay ? "stop" : "start"}</button>
       </div>
     </>
   );
