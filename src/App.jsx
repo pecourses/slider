@@ -1,9 +1,13 @@
+import { SlSizeFullscreen, SlSizeActual } from "react-icons/sl";
 import { useState, useEffect } from "react";
-import "./App.module.css";
+import styles from "./App.module.css";
 import slides from "./assets/data.js";
+
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isFSBtnVisible, setIsFSBtnVisible] = useState(false);
 
   const prev = () => {
     setCurrentIndex(prevIndex => {
@@ -13,7 +17,6 @@ function App() {
       return prevIndex - 1;
     });
   };
-
   const next = () => {
     setCurrentIndex(prevIndex => {
       if (prevIndex === slides.length - 1) {
@@ -22,11 +25,9 @@ function App() {
       return prevIndex + 1;
     });
   };
-
   const changePlay = () => {
     setIsPlay(prevIsPlay => !prevIsPlay);
   };
-
   useEffect(() => {
     let timerId = null;
     if (isPlay) {
@@ -37,12 +38,38 @@ function App() {
     };
   }, [isPlay]);
 
+  const handleMouseEnter = () => {
+    setIsFSBtnVisible(true);
+  };
+  const handleMouseLeave = () => {
+    setIsFSBtnVisible(false);
+  };
+  const toggleFullscreen = () => {
+    setIsFullScreen(prevIsFullScreen => !prevIsFullScreen);
+  };
+
   const { src, title, description } = slides[currentIndex];
   return (
     <>
       <div>
         <figure>
-          <img src={src} alt="foto"></img>
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className={
+              isFullScreen ? styles.imgContainerFullscreen : styles.imgContainer
+            }
+          >
+            <img className={styles.slideImg} src={src} alt="foto" />
+            {isFSBtnVisible && (
+              <button
+                onClick={toggleFullscreen}
+                className={styles.fullscreenBtn}
+              >
+                {!isFullScreen ? <SlSizeFullscreen /> : <SlSizeActual />}
+              </button>
+            )}
+          </div>
           <p>{title}</p>
           <figcaption>{description}</figcaption>
         </figure>
